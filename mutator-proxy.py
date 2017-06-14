@@ -21,7 +21,7 @@ def start_server(port):
 def mutate(character, mod_percentage):
 	if random() < mod_percentage:
 		debug("Modified a byte")
-		return int(random() * 255)
+		return int(random() * 256)
 	if type(character) == int: # Python 3
 		return character
 	return ord(character)      # Python 2
