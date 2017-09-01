@@ -62,10 +62,16 @@ class ClientHello():
 		This will calculate the value which should be in the length field based on
 		the data.  This may or may not match the value in the length field.
 		"""
-		# the last +1 is because we have a session ID length whether or not we have a session ID
+		# handshake_type = 1 byte
+		# length = 3 bytes
+		# version = 2 bytes
+		# random = 32-bytes
+		# session_id = 1 byte for size, more bytes for data
 		l = 1 + 3 + 2 + 32 + 1
 		if self.session_id is not None:
 			l += len(self.session_id)
+		# 2 bytes for the size of cipher suites block
+		# 1 byte for the size of compression methods
 		l += 2 + len(self.cipher_suites) + 1 + len(self.compression_methods)
 		if self.extension_data:
 			l += 2  # Length of the extension block
