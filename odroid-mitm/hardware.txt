@@ -1,0 +1,8 @@
+ODroid-N2 (4GB RAM)
+128GB MicroSD card
+oDroid-VU7 screen
+USB HUB
+USB Keyboard
+USB Mouse
+USB Ethernet adaptor
+2x Panda Wireless PAU06 (300Mbps 802.11n, Ralink RT5372)
