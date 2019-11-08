@@ -32,7 +32,6 @@ if [ "$distro_id" = "fedora" ]; then
   service_name="dhcpd"
 else
   if [ "$distro_id" = "debian" ]; then
-    echo "Untested on Debian-based distros!"
     sudo apt-get install -y isc-dhcp-server # Ubuntu
   fi
   service_name="isc-dhcp-server"
@@ -52,5 +51,5 @@ sudo systemctl status $service_name
 
 echo ""
 echo "DHCP server should now be running.  To make this persistent, run:"
-echo "sudo systemctl enable dhcpd"
+echo "sudo systemctl enable $service_name"
 echo ""
