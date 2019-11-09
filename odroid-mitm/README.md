@@ -16,5 +16,12 @@ This mean it's not serving up DHCP, or SSH isn't responding.
 
 - Reboot the hardware
 - Restart networking
+-- sudo service networking restart # or
+-- sudo systemctl restart networking
 - Re-apply netplan
+-- sudo netplan generate && sudo netplan apply
+- Restart DHCP server
+-- sudo systemctl restart isc-dhcp-server
+
+
 
