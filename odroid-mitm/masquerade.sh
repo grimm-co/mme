@@ -7,8 +7,10 @@ DOWNSTREAM_LAN_INTERFACE=eth1
 # Detect which interface is actually connected to the internet
 ifconfig $UPSTREAM_LAN_INTERFACE | grep 'inet ' &> /dev/null
 if [ $? -eq 0 ]; then
+  echo "Using LAN interface for Internet access"
   UPSTREAM_INTERFACE=$UPSTREAM_LAN_INTERFACE
 else
+  echo "Using WiFi interface for Internet access"
   UPSTREAM_INTERFACE=$UPSTREAM_WIFI_INTERFACE
 fi
 
