@@ -26,6 +26,10 @@ sudo netplan generate
 sudo netplan apply
 
 sudo apt-get install -y isc-dhcp-server # Ubuntu
+# It'd be nice to add the following in the [Service] section
+# of /lib/systemd/system/isc-dhcp-server.service...
+#Restart=on-failure
+#RestartSec=5s
 
 echo "subnet $network netmask $netmask {"  | sudo tee /etc/dhcp/dhcpd.conf
 echo "  option routers $ip;"               | sudo tee -a /etc/dhcp/dhcpd.conf
