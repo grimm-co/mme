@@ -14,7 +14,7 @@ but we did figue out how to reset it when it breaks.
 ## Wired interface broken
 This mean it's not serving up DHCP, or SSH isn't responding.
 
-- Reboot the hardware
+- Reboot the hardware (unplug & replug the USB LAN adaptor)
 - Restart networking
 -- sudo systemctl restart networking
 - Re-apply netplan
@@ -23,4 +23,12 @@ This mean it's not serving up DHCP, or SSH isn't responding.
 -- sudo systemctl restart isc-dhcp-server
 - Reconnect to wifi (if using that for internet access)
 
+# Unable to connect to wifi
+This means wlan0 can't connect to an access point.  The Network Manager UI is
+all disabled.
+
+- Reset the link
+-- sudo ip link set wlan0 down && sudo ip link set wlan0 up
+- If this gives a "device or resource is busy" error...
+-- Reboot the hardware (unplug & replug the wifi adaptor)
 
