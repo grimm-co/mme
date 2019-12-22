@@ -69,5 +69,5 @@ echo "  range $dhcp_start $dhcp_end;"      | sudo tee -a /etc/dhcp/dhcpd.conf
 echo "}"                                   | sudo tee -a /etc/dhcp/dhcpd.conf
 
 sudo systemctl start isc-dhcp-server
-sudo systemctl status isc-dhcp-server
+#sudo systemctl status isc-dhcp-server
 sudo systemctl enable isc-dhcp-server
