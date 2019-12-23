@@ -18,3 +18,4 @@ sudo ifconfig wlan1 up
 sudo systemctl unmask hostapd
 
 sudo systemctl start hostapd
+sudo systemctl enable hostapd
