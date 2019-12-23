@@ -16,8 +16,9 @@ fi
 
 # Install scripts to do masqerading and IP forwarding
 ./masquerade.sh   # start masquerading now
-sudo cp masquerade.sh /etc/rc.local  # and in the future
+cp masquerade.sh /etc/rc.local  # and in the future
 cat ./reset_wifi_radios.sh >> /etc/rc.local
 echo "systemctl restart hostapd" >> /etc/rc.local
 echo "systemctl restart isc-dhcp-server" >> /etc/rc.local
 ./enable_ip_forwarding.sh
+systemctl restart isc-dhcp-server
