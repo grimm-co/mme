@@ -1,7 +1,7 @@
 #!/bin/sh
 # Install and configure hostapd
-$wlan_iface="$1"
-$wlan_mitm="$2"
+wlan_iface="$1"
+wlan_mitm="$2"
 
 # Install hostapd
 apt-get install -y hostapd
