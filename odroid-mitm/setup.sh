@@ -13,10 +13,10 @@ for d in `ip a | ./ip_parser.py --down`; do
 	ip link set dev "$d" up
 done
 
-lan_iface=`ip a | ./ip_parser.py --wired --with-ip`
-wlan_iface=`ip a | ./ip_parser.py --wireless --with-ip`
-lan_mitm=`ip a | ./ip_parser.py --wired --without-ip`
-wlan_mitm=`ip a | ./ip_parser.py --wireless --without-ip`
+lan_iface=`ip a | ./ip_parser.py --wired --with-ip | head -n 1`
+wlan_iface=`ip a | ./ip_parser.py --wireless --with-ip | head -n 1`
+lan_mitm=`ip a | ./ip_parser.py --wired --without-ip | head -n 1`
+wlan_mitm=`ip a | ./ip_parser.py --wireless --without-ip | head -n 1`
 
 echo "Installing DHCP server to serve IPs on: $lan_mitm $wlan_mitm"
 ./install_dhcp.sh "$lan_mitm" "$wlan_mitm"

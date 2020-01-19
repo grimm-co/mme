@@ -14,8 +14,14 @@ cp hostapd.conf /etc/hostapd/
 nmcli radio wifi off
 rfkill unblock wlan
 
-ip link set dev "$wlan_iface" up
-ip link set dev "$wlan_mitm" up
+if [ -n "$wlan_iface" ]; then
+	echo "Bringing up $wlan_iface"
+	ip link set dev "$wlan_iface" up
+fi
+if [ -n "$wlan_mitm" ]; then
+	echo "Bringing up $wlan_mitm"
+	ip link set dev "$wlan_mitm" up
+fi
 
 # Start hostapd
 systemctl unmask hostapd
