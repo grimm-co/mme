@@ -1,73 +1,71 @@
 #!/bin/sh -e
-# Assumptions:
-# eth0 may be used to connect to a LAN
-# eth1 will serve up DHCP
-# wlan0 may be used to connect to wifi
-# wlan1 will be the AP
+# Arguments are network interface names
+lan_mitm="$1"  # Serve up DHCP here
+wlan_mitm="$2" # Serve up DHCP here
 
-eth0="wlan1"  # serve up DHCP addresses on wlan1
-ip="192.168.101.1"
-network="192.168.101.0"
-netmask="255.255.255.0"
-cidr="24"
-search_domain="example.lan"
 nameserver="4.2.2.2"
-dhcp_start="192.168.101.10"
-dhcp_end="192.168.101.100"
+search_domain="example.lan"
 
-# Make sure IP gets set properly now and in the future
-echo "network:"            | sudo tee /etc/netplan/wifi-server.yaml
-echo "  version: 2"        | sudo tee -a /etc/netplan/wifi-server.yaml
-echo "  ethernets:"        | sudo tee -a /etc/netplan/wifi-server.yaml
-echo "    $eth0:"          | sudo tee -a /etc/netplan/wifi-server.yaml
-echo "      addresses:"    | sudo tee -a /etc/netplan/wifi-server.yaml
-echo "        - $ip/$cidr" | sudo tee -a /etc/netplan/wifi-server.yaml
-sudo netplan generate
-sudo netplan apply
-
-sudo apt-get install -y isc-dhcp-server # Ubuntu
+apt-get install -y isc-dhcp-server # Ubuntu
 # It'd be nice to add the following in the [Service] section
 # of /lib/systemd/system/isc-dhcp-server.service...
 #Restart=on-failure
 #RestartSec=5s
 
-echo "subnet $network netmask $netmask {"  | sudo tee /etc/dhcp/dhcpd.conf
-echo "  option routers $ip;"               | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option subnet-mask $netmask;"      | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option domain-search   \"$search_domain\";" | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option domain-name-servers $nameserver;" | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  range $dhcp_start $dhcp_end;"      | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "}"                                   | sudo tee -a /etc/dhcp/dhcpd.conf
 
-# Now we set up another DHCP server on eth1
-eth0="eth1"  # serve up DHCP addresses on eth1
-ip="192.168.102.1"
-network="192.168.102.0"
-netmask="255.255.255.0"
-cidr="24"
-search_domain="example.lan"
-nameserver="4.2.2.2"
-dhcp_start="192.168.102.10"
-dhcp_end="192.168.102.100"
+if [ -n "$wlan_mitm" ]; then
+  ip="192.168.101.1"
+  network="192.168.101.0"
+  netmask="255.255.255.0"
+  cidr="24"
+  dhcp_start="192.168.101.10"
+  dhcp_end="192.168.101.100"
 
-# Make sure IP gets set properly now and in the future
-echo "network:"            | sudo tee /etc/netplan/lan-server.yaml
-echo "  version: 2"        | sudo tee -a /etc/netplan/lan-server.yaml
-echo "  ethernets:"        | sudo tee -a /etc/netplan/lan-server.yaml
-echo "    $eth0:"          | sudo tee -a /etc/netplan/lan-server.yaml
-echo "      addresses:"    | sudo tee -a /etc/netplan/lan-server.yaml
-echo "        - $ip/$cidr" | sudo tee -a /etc/netplan/lan-server.yaml
-sudo netplan generate
-sudo netplan apply
+  # Make sure IP gets set properly now and in the future
+  echo "network:"            | tee /etc/netplan/wifi-server.yaml
+  echo "  version: 2"        | tee -a /etc/netplan/wifi-server.yaml
+  echo "  ethernets:"        | tee -a /etc/netplan/wifi-server.yaml
+  echo "    $wlan_mitm:"     | tee -a /etc/netplan/wifi-server.yaml
+  echo "      addresses:"    | tee -a /etc/netplan/wifi-server.yaml
+  echo "        - $ip/$cidr" | tee -a /etc/netplan/wifi-server.yaml
+  netplan generate
+  netplan apply
 
-echo "subnet $network netmask $netmask {"  | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option routers $ip;"               | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option subnet-mask $netmask;"      | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option domain-search   \"$search_domain\";" | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  option domain-name-servers $nameserver;" | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "  range $dhcp_start $dhcp_end;"      | sudo tee -a /etc/dhcp/dhcpd.conf
-echo "}"                                   | sudo tee -a /etc/dhcp/dhcpd.conf
+  echo "subnet $network netmask $netmask {"  | tee /etc/dhcp/dhcpd.conf
+  echo "  option routers $ip;"               | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option subnet-mask $netmask;"      | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option domain-search   \"$search_domain\";" | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option domain-name-servers $nameserver;" | tee -a /etc/dhcp/dhcpd.conf
+  echo "  range $dhcp_start $dhcp_end;"      | tee -a /etc/dhcp/dhcpd.conf
+  echo "}"                                   | tee -a /etc/dhcp/dhcpd.conf
+fi
 
-sudo systemctl start isc-dhcp-server
-#sudo systemctl status isc-dhcp-server
-sudo systemctl enable isc-dhcp-server
+if [ -n "$lan_mitm" ]; then
+  ip="192.168.102.1"
+  network="192.168.102.0"
+  netmask="255.255.255.0"
+  cidr="24"
+  dhcp_start="192.168.102.10"
+  dhcp_end="192.168.102.100"
+
+  # Make sure IP gets set properly now and in the future
+  echo "network:"            | tee /etc/netplan/lan-server.yaml
+  echo "  version: 2"        | tee -a /etc/netplan/lan-server.yaml
+  echo "  ethernets:"        | tee -a /etc/netplan/lan-server.yaml
+  echo "    $lan_mitm:"      | tee -a /etc/netplan/lan-server.yaml
+  echo "      addresses:"    | tee -a /etc/netplan/lan-server.yaml
+  echo "        - $ip/$cidr" | tee -a /etc/netplan/lan-server.yaml
+  netplan generate
+  netplan apply
+
+  echo "subnet $network netmask $netmask {"  | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option routers $ip;"               | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option subnet-mask $netmask;"      | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option domain-search   \"$search_domain\";" | tee -a /etc/dhcp/dhcpd.conf
+  echo "  option domain-name-servers $nameserver;" | tee -a /etc/dhcp/dhcpd.conf
+  echo "  range $dhcp_start $dhcp_end;"      | tee -a /etc/dhcp/dhcpd.conf
+  echo "}"                                   | tee -a /etc/dhcp/dhcpd.conf
+fi
+
+systemctl start isc-dhcp-server
+systemctl enable isc-dhcp-server

@@ -1,21 +1,24 @@
 #!/bin/sh
 # Install and configure hostapd
+$wlan_iface="$1"
+$wlan_mitm="$2"
 
 # Install hostapd
-sudo apt-get install -y hostapd
+apt-get install -y hostapd
 
 # Configure hostapd
-echo "DAEMON_CONF=/etc/hostapd/hostapd.conf" | sudo tee -a /etc/default/hostapd
-sudo cp hostapd.conf /etc/hostapd/
+echo "DAEMON_CONF=/etc/hostapd/hostapd.conf" | tee -a /etc/default/hostapd
+cp hostapd.conf /etc/hostapd/
 
 # hostapd won't be able to configure driver mode unless this is done:
-sudo nmcli radio wifi off
-sudo rfkill unblock wlan
-sudo ifconfig wlan0 up
-sudo ifconfig wlan1 up
+nmcli radio wifi off
+rfkill unblock wlan
+
+ip link set dev "$wlan_iface" up
+ip link set dev "$wlan_mitm" up
 
 # Start hostapd
-sudo systemctl unmask hostapd
+systemctl unmask hostapd
 
-sudo systemctl start hostapd
-sudo systemctl enable hostapd
+systemctl start hostapd
+systemctl enable hostapd
