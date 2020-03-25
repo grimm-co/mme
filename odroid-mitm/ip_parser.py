@@ -33,7 +33,7 @@ def get_ip(line, needle="inet6"):
         return parts[1].strip().split("/")[0]
 
 if __name__ == "__main__":
-    p = ArgumentParser("Swiss army knife of parsing the output of `ip a`")
+    p = ArgumentParser(description="Swiss army knife of parsing the output of `ip a` (pipe `ip a` to this script)")
     p.add_argument("--without-ips", help="only without ips", action="store_true")
     p.add_argument("--with-ips", help="only with ips", action="store_true")
     p.add_argument("--wireless", help="only wireless interfaces", action="store_true")
@@ -41,6 +41,7 @@ if __name__ == "__main__":
     p.add_argument("--up", help="only interfaces which are up", action="store_true")
     p.add_argument("--down", help="only interfaces which are down", action="store_true")
     p.add_argument("--only", help="Interface name to get info on")
+    p.add_argument("--show-ip", help="Outputs the IP addresses in addition to the interface name", action="store_true")
     args = p.parse_args()
     
     ifaces = []
@@ -91,5 +92,10 @@ if __name__ == "__main__":
         ifaces = [x for x in ifaces if x["name"] == args.only]
 
     # Print what's left
-    print("\n".join([x["name"] for x in ifaces]))
+    if args.show_ip:
+        for x in ifaces:
+            ip = x["ip"] if "ip" in x else ""
+            print(x["name"] + " " + ip)
+    else:
+        print("\n".join([x["name"] for x in ifaces]))
     #pprint(ifaces)
